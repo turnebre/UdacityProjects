@@ -10,7 +10,7 @@ time_table_drop = "drop table if exists time;"
 
 songplay_table_create = """
 create table if not exists songplays 
-    (start_time date, 
+    (start_time timestamp, 
     user_id int,
     level text,
     song_id text, 
@@ -85,7 +85,7 @@ INSERT INTO time VALUES (%s, %s, %s, %s, %s, %s, %s)
 song_select = """
 select song_id, a.artist_id
 from songs a
-join artists b
+left join artists b
 on a.artist_id = b.artist_id
 where %s = a.title
 and %s = b.name
