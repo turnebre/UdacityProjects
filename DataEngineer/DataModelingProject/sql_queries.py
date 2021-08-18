@@ -10,70 +10,74 @@ time_table_drop = "drop table if exists time;"
 
 songplay_table_create = """
 create table if not exists songplays 
-    (start_time timestamp, 
-    user_id int,
-    level text,
+    (songplay_id serial primary key,
+    start_time timestamp not null, 
+    user_id int not null,
+    level text not null,
     song_id text, 
     artist_id text,
-    session_id int,
-    location text, 
-    user_agent text);
+    session_id int not null,
+    location text not null, 
+    user_agent text not null);
 """
 
 user_table_create = """
 create table if not exists users
-    (user_id int,
-    first_name text,
-    last_name text,
-    gender text,
-    level text);
+    (user_id int primary key,
+    first_name text not null,
+    last_name text not null,
+    gender text not null,
+    level text not null);
 """
 
 song_table_create = """
 create table if not exists songs
-    (song_id text,
-    title text,
-    artist_id text,
-    year int,
-    duration float);
+    (song_id text primary key,
+    title text not null,
+    artist_id text not null,
+    year int not null,
+    duration float not null);
 """
 
 artist_table_create = """
 create table if not exists artists
-    (artist_id text,
-    name text,
-    location text,
+    (artist_id text primary key,
+    name text not null,
+    location text not null,
     latitude decimal,
     longitude decimal);
 """
 
 time_table_create = """
 create table if not exists time
-    (start_time timestamp,
-    hour int,
-    day int,
-    week int,
-    month int,
-    year int,
-    weekday int);
+    (start_time timestamp not null,
+    hour int not null,
+    day int not null,
+    week int not null,
+    month int not null,
+    year int not null,
+    weekday int not null);
 """
 
 # INSERT RECORDS
 
 songplay_table_insert = """
-INSERT INTO songplays VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+INSERT INTO songplays VALUES (default, %s, %s, %s, %s, %s, %s, %s, %s)
 """
 
 user_table_insert = """
 INSERT INTO users VALUES (%s, %s, %s, %s, %s)
+ON CONFLICT (user_id) DO UPDATE SET level=EXCLUDED.level
 """
 
 song_table_insert = """
 INSERT INTO songs VALUES (%s, %s, %s, %s, %s)
+ON CONFLICT (song_id) DO NOTHING
 """
 
 artist_table_insert = """
 INSERT INTO artists VALUES (%s, %s, %s, %s, %s)
+ON CONFLICT (artist_id) DO NOTHING
 """
 
 time_table_insert = """
