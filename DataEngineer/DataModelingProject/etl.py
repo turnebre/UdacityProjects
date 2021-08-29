@@ -1,7 +1,7 @@
 import os
 import glob
-import psycopg2
 import pandas as pd
+import psycopg2
 from sql_queries import *
 
 
