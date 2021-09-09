@@ -1,3 +1,3 @@
 # UdacityProjects
 
-Repo of all the Projects I've done for Udacity
+Repo of all the classes and projects I've done for Udacity
