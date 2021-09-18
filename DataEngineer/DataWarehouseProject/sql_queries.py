@@ -111,7 +111,8 @@ CREATE TABLE IF NOT EXISTS time (
     week int not null,
     month int not null,
     year int not null,
-    weekday int not null
+    weekday int not null,
+    primary key(start_time)
 )
 """
 
@@ -120,20 +121,20 @@ CREATE TABLE IF NOT EXISTS time (
 staging_events_copy = (
     """
 COPY staging_events
-FROM 's3://udacity-dend/log_data'
+FROM {}
 credentials 'aws_iam_role={}'
 format as json 'auto'
 """
-).format("arn:aws:iam::071889381944:role/myRedshiftRole")
+).format(config["S3"]["LOG_DATA"], config["IAM_ROLE"]["ARN"])
 
 staging_songs_copy = (
     """
 COPY staging_songs
-FROM 's3://udacity-dend/song_data'
+FROM {}
 credentials 'aws_iam_role={}'
 format as json 'auto'
 """
-).format("arn:aws:iam::071889381944:role/myRedshiftRole")
+).format(config["S3"]["SONG_DATA"], config["IAM_ROLE"]["ARN"])
 
 # FINAL TABLES
 
@@ -148,7 +149,7 @@ INSERT INTO songplays (
     location,
     user_agent
 ) ( 
-    SELECT 
+    SELECT DISTINCT
         (timestamp 'epoch' + a.ts::numeric / 1000 * interval '1 second'),
         a.userid,
         a.level,
@@ -162,6 +163,7 @@ INSERT INTO songplays (
     ON a.artist = b.artist_name
     and a.song = b.title
     where b.song_id is not null
+    and a.page = 'NextSong'
 )
 """
 
@@ -172,7 +174,7 @@ INSERT INTO users (
     gender,
     level 
 ) (
-    SELECT 
+    SELECT DISTINCT
         firstname,
         lastname,
         gender,
@@ -190,7 +192,7 @@ INSERT INTO songs (
     year,
     duration
 ) (
-    SELECT
+    SELECT DISTINCT
         song_id,
         title,
         artist_id,
@@ -208,7 +210,7 @@ INSERT INTO artists (
     latitude,
     longitude
 ) (
-    SELECT
+    SELECT DISTINCT
         artist_id,
         artist_name,
         artist_location,
@@ -228,7 +230,7 @@ INSERT INTO time (
     year,
     weekday
 ) (
-    SELECT
+    SELECT DISTINCT
         (timestamp 'epoch' + ts::numeric / 1000 * interval '1 second'),
         EXTRACT (HOUR FROM (timestamp 'epoch' + ts::numeric / 1000 * interval '1 second')),
         EXTRACT (DAY FROM (timestamp 'epoch' + ts::numeric / 1000 * interval '1 second')),

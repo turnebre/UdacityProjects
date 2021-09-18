@@ -2,6 +2,8 @@
 
 This project looks at Sparkify's data collection of song's and listening activity.  The goal is to move their data, which resides in S3 in a directory of JSON logs, to a cloud database (redshift).
 
+The `"dwh.cfg"` file contains all the AWS credentials needed to connect to our database, such as the hist, S3 path, and cluster configuration
+
 ## Database Schema Design
 
 The database schema is broken down into fact and dimension tables.  Most of the columns have non null constraints, but a few didnt have much information so were left without a non null constraint.  The schema goes as follows:
