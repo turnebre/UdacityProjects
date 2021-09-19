@@ -2,22 +2,29 @@ import configparser
 import psycopg2
 from sql_queries import create_table_queries, drop_table_queries
 
-# Pulls each of the drop queries in sql_queries and executes them
+
 def drop_tables(cur, conn):
+    """
+    Drops tables in databvase if they exist
+    """
     for query in drop_table_queries:
         cur.execute(query)
         conn.commit()
 
 
-# Pulls each of the create table queries in sql_queroes and execites them
 def create_tables(cur, conn):
+    """
+    Creates tables in database
+    """
     for query in create_table_queries:
         cur.execute(query)
         conn.commit()
 
 
-# Pulls credentials in config file and calls above functions
 def main():
+    """
+    Pulls credentials in config file and calls above functions
+    """
     config = configparser.ConfigParser()
     config.read("dwh.cfg")
 

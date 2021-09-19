@@ -123,9 +123,11 @@ staging_events_copy = (
 COPY staging_events
 FROM {}
 credentials 'aws_iam_role={}'
-format as json 'auto'
+format as json {}
 """
-).format(config["S3"]["LOG_DATA"], config["IAM_ROLE"]["ARN"])
+).format(
+    config["S3"]["LOG_DATA"], config["IAM_ROLE"]["ARN"], config["S3"]["LOG_JSONPATH"]
+)
 
 staging_songs_copy = (
     """
@@ -180,7 +182,8 @@ INSERT INTO users (
         gender,
         level
     FROM staging_events
-    where firstname is not null
+    WHERE firstname is not null
+    AND page = 'NextSong'
 )
 """
 
@@ -239,6 +242,7 @@ INSERT INTO time (
         EXTRACT (YEAR FROM (timestamp 'epoch' + ts::numeric / 1000 * interval '1 second')),
         EXTRACT (DAYOFWEEK FROM (timestamp 'epoch' + ts::numeric / 1000 * interval '1 second'))
     FROM staging_events
+    WHERE page = 'NextSong'
 )
 """
 
