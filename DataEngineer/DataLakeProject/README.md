@@ -29,3 +29,7 @@ The database schema is broken down into fact and dimension tables, the schema go
 #### artists 
 
   - Contains  information relating to song artists, such as their name and location.
+
+#### time
+
+  - Contains information based on the time of each songplay.  It breaks down the hour, day, week , month, weekday etc.  
