@@ -1,15 +1,13 @@
 import configparser
-from datetime import datetime
 import os
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import dayofweek, udf, col, monotonically_increasing_id
+from pyspark.sql.functions import dayofweek, udf, monotonically_increasing_id
 from pyspark.sql.functions import (
     year,
     month,
     dayofmonth,
     hour,
     weekofyear,
-    date_format,
     from_unixtime,
 )
 from pyspark.sql.types import IntegerType, TimestampType
@@ -23,13 +21,20 @@ os.environ["AWS_SECRET_ACCESS_KEY"] = config["DataLake"]["AWS_SECRET_ACCESS_KEY"
 
 
 def create_spark_session():
-    spark = SparkSession.builder.config(
-        "spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.2.0"
-    ).getOrCreate()
+    spark = (
+        SparkSession.builder.config(
+            "spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.2.0"
+        )
+        .config("spark.executor.memory", "4g")
+        .getOrCreate()
+    )
     return spark
 
 
 def process_song_data(spark, input_data, output_data):
+    """
+    Processes song data in s3 and writes to another bucket.
+    """
     # get filepath to song data file
     song_data = input_data + "song_data/*/*/*/*.json"
 
@@ -68,6 +73,9 @@ def process_song_data(spark, input_data, output_data):
 
 
 def process_log_data(spark, input_data, output_data):
+    """
+    Processes log data from s3 bucket and writes it to another bucket.
+    """
     # get filepath to log data file
     log_data = input_data + "log_data/*/*/*/*.json"
 
@@ -81,8 +89,8 @@ def process_log_data(spark, input_data, output_data):
 
     # extract columns for users table
     users_table = (
-        df.select("user_id", "firstName", "lastName", "gender", "level")
-        .dropna(subset=["user_id"])
+        df.select("userId", "firstName", "lastName", "gender", "level")
+        .dropna(subset=["userId"])
         .dropDuplicates()
     )
 
@@ -148,6 +156,9 @@ def process_log_data(spark, input_data, output_data):
 
 
 def main():
+    """
+    Calls above functions toread and write each dataset.
+    """
     spark = create_spark_session()
     input_data = "s3a://udacity-dend/"
     output_data = "s3a://redhawks211/"
