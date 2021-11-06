@@ -30,6 +30,12 @@ The database schema is broken down into fact and dimension tables, the schema go
 
   - Contains  information relating to song artists, such as their name and location.
 
+<<<<<<< HEAD
 ## Script Instructions
 
 In order to run above script, a number of items need to be completed. First, and EMR cluster configured to run Spark needs to be created in AWS.  Second, A S3 bucket needs to be made where the modeled data will be stored.  Third, an IAM role needs to be made with AWS access and secret keys in order to connect, read, and write to the cluster/ S3 bucket which'll be stored in the '"dl.cfg"' file.  Once this is all complete, you'll need to get the end point for the S3 bucket, store it as a variable in the script, and run the '"etl.py"' file.
+=======
+#### time
+
+  - Contains information based on the time of each songplay.  It breaks down the hour, day, week , month, weekday etc.  
+>>>>>>> 3affb48da3e23f23d3c7f33eddfed3067d1e0d2a
